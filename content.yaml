@@ -2,7 +2,7 @@
 Meta:
   Author: "Alea"
   Description: "The personal webpage of Alea."
-  Icon: ""
+  Icon: "https://raw.githubusercontent.com/necrux/alea/main/assets/images/globe-icon.png"
   Twitter: ""
   Tags:
     - "Alea"
@@ -21,7 +21,7 @@ Page:
 Header:
   Title: "Welcome to Alea."
 Image:
-  Path: ""
+  Path: "https://raw.githubusercontent.com/necrux/alea/main/assets/images/globe.png"
   AltText: "Globe"
 Body:
   GitHub: "https://github.com/necrux/alea"
