@@ -10,6 +10,7 @@ import os
 import sys
 import argparse
 import yaml
+import schema
 from shutil import copyfile
 from datetime import date
 from string import Template
@@ -115,6 +116,57 @@ def build_assets(source, destination, site_content, generate):
         print(result)
     return
 
+def check_schema():
+    config_schema = schema.Schema({
+        "Meta": {
+            "Author": str,
+            "Description": str,
+            "Icon": str,
+            "Twitter": str,
+            "Tags": list
+        },
+        "Google": {
+            "Analytics": bool,
+            schema.Optional("ID"): str
+        },
+        "Page": {
+            "Color": {
+                "Background": str,
+                "Font": str,
+                "Clicked-Link": str
+            },
+            "Font": str,
+            "Borders": bool
+        },
+        "Header": {
+            "Title": str,
+            schema.Optional("Subtitle"): str
+        },
+        "Image": {
+            "Path": str,
+            "AltText": str
+        },
+        "Body": {
+           "GitHub": str
+        },
+        "Footer": {
+            "Title": str,
+            schema.Optional("Subtitle"): str,
+            "Copyright": bool
+        }
+    }, ignore_extra_keys=True)
+    print("Validating schema.")
+
+    with open('content.yaml') as f:
+        content = yaml.safe_load(f)
+
+    try:
+        config_schema.validate(content)
+        print("Configuration is valid.")
+    except schema.SchemaError as se:
+        raise se
+    return
+
 def main(logo):
     """Entrypoint for site_generator."""
 
@@ -165,7 +217,7 @@ def main(logo):
                    }
 
     #if check:
-    #    print('Validating content.yaml')
+    #    check_schema()
     if backup:
         print('Backing up the files.')
         for template in templates:
