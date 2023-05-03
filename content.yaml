@@ -1,0 +1,32 @@
+---
+Meta:
+  Author: "Alea"
+  Description: "The personal webpage of Alea."
+  Icon: ""
+  Twitter: ""
+  Tags:
+    - "Alea"
+    - "Advanced Link Encapsulation Algorithm"
+    - "Link Encapsulation"
+Google:
+  Analytics: False
+  ID: 
+Page:
+  Color:
+    Background: 'darksalmon'
+    Font: 'teal'
+    Clicked-Link: 'purple'
+  Font: 'Sans-serif'
+  Borders: False
+Header:
+  Title: "Welcome to Alea."
+Image:
+  Path: ""
+  AltText: "Globe"
+Body:
+  GitHub: "https://github.com/necrux/alea"
+  LinkedIn: "https://www.linkedin.com/in/wes-henderson"
+  MySpace: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+Footer:
+  Title: "Alea: Advanced Link Encapsulation Algorithm"
+  Copyright: True

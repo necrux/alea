@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+RESUME='docs/resume.md'
+KONAMI='docs/konami.md'
+PANDOC='docs/pandoc_metadata.yml'
+PDF='docs/resume.pdf'
+BASE_PATH="$(git rev-parse --show-toplevel)"
+SITE_CHECK=(content.yaml
+            site_generator.py
+            templates
+            assets)
+
+if git status --porcelain | grep -q "${RESUME}"; then
+    pushd "${BASE_PATH}" &>/dev/null
+        cp ${RESUME} ${KONAMI}
+	sed -i 's/layout: resume/layout: konami/g' ${KONAMI}
+	sed -i 's@permalink: /resume@permalink: /konami_resume@g' ${KONAMI}
+	git add ${KONAMI}
+
+    sed '1 { /^---/ { :a N; /\n===/! ba; d} }' ${RESUME} >> ${PANDOC}
+    pandoc \
+        --output ${PDF} \
+        ${PANDOC}
+    git checkout ${PANDOC}
+    git add ${PDF}
+    popd &>/dev/null
+fi
+
+for file in ${SITE_CHECK[@]}; do
+    if git status --porcelain | grep -q ${file}; then
+        pushd "${BASE_PATH}" &>/dev/null
+            ./alea --generate
+            git add index.html
+            git add assets/css/main.css
+        popd &>/dev/null
+        break
+    fi
+done
