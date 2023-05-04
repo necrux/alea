@@ -127,7 +127,7 @@ def check_schema():
         },
         "Google": {
             "Analytics": bool,
-            schema.Optional("ID"): str
+            schema.Optional("ID"): schema.Or(str, None)
         },
         "Page": {
             "Color": {
@@ -140,19 +140,17 @@ def check_schema():
         },
         "Header": {
             "Title": str,
-            schema.Optional("Subtitle"): str
         },
         "Image": {
             "Path": str,
             "AltText": str
         },
         "Body": {
-           "GitHub": str
+           schema.Optional(object): object
         },
         "Footer": {
             "Title": str,
-            schema.Optional("Subtitle"): str,
-            "Copyright": bool
+            "Copyright": schema.Or(bool, error="Unsupported option. Copyright must be either True or False.")
         }
     }, ignore_extra_keys=True)
     print("Validating schema.")
@@ -164,7 +162,16 @@ def check_schema():
         config_schema.validate(content)
         print("Configuration is valid.")
     except schema.SchemaError as se:
-        raise se
+        if se.errors:
+            for error in se.errors:
+                if error:
+                    print(error)
+            exit(1)
+        elif se.autos:
+            for error in se.autos:
+                if error:
+                    print(error)
+            exit(1)
     return
 
 def main(logo):
@@ -197,13 +204,17 @@ def main(logo):
                              '--check',
                              default = False,
                              action  = 'store_true',
-                             help    = 'Validate the content.yaml file. Not yet implemented.')
+                             help    = 'Validate the content.yaml file only.')
 
     args     = job_options.parse_args()
     stdout   = args.stdout
     backup   = args.backup
     generate = args.generate
     check    = args.check
+
+    check_schema()
+    if check:
+        exit(0)
 
     site_content = build_content()
     templates    = {'html':
@@ -216,8 +227,6 @@ def main(logo):
                      },
                    }
 
-    #if check:
-    #    check_schema()
     if backup:
         print('Backing up the files.')
         for template in templates:
