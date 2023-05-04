@@ -149,7 +149,7 @@ def check_schema():
            schema.Optional(object): object
         },
         "Footer": {
-            "Title": str,
+            schema.Optional("Title"): schema.Or(str, None),
             "Copyright": schema.Or(bool, error="Unsupported option. Copyright must be either True or False.")
         }
     }, ignore_extra_keys=True)
