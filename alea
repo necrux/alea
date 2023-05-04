@@ -4,6 +4,9 @@
  Quickly generate a new index.html file based off of content.yaml.
  Any changes to this file, content.yaml, index.tmpl, or associated
  CSS files will trigger this script at the time of commit.
+
+ TODO:
+  * Look into alternative templating solutions.
 """
 
 import os
@@ -61,13 +64,37 @@ def build_content():
         site_content['body'] += '<a target="_blank" href="' + content['Body'][link] + '">' + link + '</a><br>'
 
     # Grab the footer.
+    #site_content['college'] = '529 Donation Links: '
+    count = 1
     site_content['footer'] = ''
-    for title in content['Footer']:
-        if title != 'Copyright':
-            site_content['footer'] += '<p>' + content['Footer'][title] + '</p>'
+    if not 'FS' in content['Footer']:
+        for title in content['Footer']:
+            if title != 'Copyright':
+                site_content['footer'] += '<p>' + content['Footer'][title] + '</p>'
+    else:
+        site_content['footer'] += content['Footer'][title]
+        for title in content['Footer']:
+            if title != 'Copyright' and title != 'FS' and title != 'Title' and count != len(content['Footer']) - 3:
+                site_content['footer'] += '<a target="_blank" href="' + content['Footer'][title] + '">' + title + '</a>' + content['Footer']['FS']
+                count += 1
+            elif title != 'Copyright' and title != 'FS' and title != 'Title' and count == len(content['Footer']) - 3:
+                site_content['footer'] += '<a target="_blank" href="' + content['Footer'][title] + '">' + title + '</a>'
 
     if content['Footer']['Copyright']:
         site_content['footer'] += f"<p>© {year} {site_content['author']}</p>"
+
+
+    #count = 1
+
+    #for child in content['Footer'][529]:
+    #    if count != len(content['Footer'][529]):
+    #        site_content['college'] += '<a target="_blank" href="' + content['Footer'][529][child] + '">' + child + '</a>' + content['Footer']['FS']
+    #    else:
+    #        site_content['college'] += '<a target="_blank" href="' + content['Footer'][529][child] + '">' + child + '</a>'
+    #    count += 1
+
+    #if content['Footer']['Copyright']:
+    #    site_content['college'] += f"<p>© {year} {site_content['author']}</p>"
 
     # Grab the CSS.
     site_content['background'] = content['Page']['Color']['Background']
@@ -117,6 +144,8 @@ def build_assets(source, destination, site_content, generate):
     return
 
 def check_schema():
+    """Validate the content.yaml scehma."""
+
     config_schema = schema.Schema({
         "Meta": {
             "Author": str,
