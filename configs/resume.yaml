@@ -10,7 +10,7 @@ Meta:
     - "Resume Generator"
     - "Resume"
 Google:
-  Analytics: True
+  Analytics: False
   ID: ""
 Contact:
   Title: "Advanced Link Encapsulation Algorithm"
