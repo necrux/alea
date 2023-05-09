@@ -19,7 +19,7 @@ Page:
   Font: 'Sans-serif'
   Borders: False
 Header:
-  Title: "Welcome to Alea."
+  Title: "Welcome to Alea!"
 Image:
   Path: "https://raw.githubusercontent.com/necrux/alea/main/assets/images/globe.png"
   AltText: "Globe"
