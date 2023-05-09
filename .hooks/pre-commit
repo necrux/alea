@@ -2,39 +2,62 @@
 
 set -eo pipefail
 
-RESUME='docs/resume.md'
-KONAMI='docs/konami.md'
-PANDOC='docs/pandoc_metadata.yml'
-PDF='docs/resume.pdf'
+#RESUME='docs/resume.md'
+RESUME='resume.html'
+KONAMI='konami-resume.html'
+#PANDOC='docs/pandoc_metadata.yml'
+#PDF='docs/resume.pdf'
+PDF='resume.pdf'
 BASE_PATH="$(git rev-parse --show-toplevel)"
 SITE_CHECK=(content.yaml
-            site_generator.py
+            resume.yaml
+            alea.py
             templates
             assets)
 
-if git status --porcelain | grep -q "${RESUME}"; then
-    pushd "${BASE_PATH}" &>/dev/null
-        cp ${RESUME} ${KONAMI}
-	sed -i 's/layout: resume/layout: konami/g' ${KONAMI}
-	sed -i 's@permalink: /markdown_resume@permalink: /konami_resume@g' ${KONAMI}
-	git add ${KONAMI}
-
-    sed '1 { /^---/ { :a N; /\n===/! ba; d} }' ${RESUME} >> ${PANDOC}
-    pandoc \
-        --output ${PDF} \
-        ${PANDOC}
-    git checkout ${PANDOC}
-    git add ${PDF}
-    popd &>/dev/null
-fi
+#if git status --porcelain | grep -q "${RESUME}"; then
+#    pushd "${BASE_PATH}" &>/dev/null
+#        cp ${RESUME} ${KONAMI}
+#	sed -i 's/layout: resume/layout: konami/g' ${KONAMI}
+#	sed -i 's@permalink: /markdown_resume@permalink: /konami_resume@g' ${KONAMI}
+#	git add ${KONAMI}
+#
+#    sed '1 { /^---/ { :a N; /\n===/! ba; d} }' ${RESUME} >> ${PANDOC}
+#    pandoc \
+#        --output ${PDF} \
+#        ${PANDOC}
+#    git checkout ${PANDOC}
+#    git add ${PDF}
+#    popd &>/dev/null
+#fi
 
 for file in ${SITE_CHECK[@]}; do
     if git status --porcelain | grep -q ${file}; then
         pushd "${BASE_PATH}" &>/dev/null
-            ./alea --index
+            ./alea.py --index --resume
             git add index.html
             git add assets/css/main.css
+            git add ${RESUME}
+            git add ${KONAMI}
         popd &>/dev/null
         break
     fi
 done
+
+if git status --porcelain | grep -q "${RESUME}"; then
+    pushd "${BASE_PATH}" &>/dev/null
+        TMP=$(mktemp /tmp/resume.XXXXXX)
+        cp ${RESUME} ${TMP}
+        sed -i 's@<h3><a id="pdf" href="docs/Resume.pdf">Download PDF</a></h3>@@g' ${TMP}
+        /usr/bin/google-chrome \
+            --headless \
+            --disable-gpu \
+            --no-pdf-header-footer \
+            --no-margins \
+            --run-all-compositor-stages-before-draw \
+            --print-to-pdf=${PDF} \
+            file://${TMP}
+        rm -f ${TMP}
+        git add ${PDF}
+    popd &>/dev/null
+fi
