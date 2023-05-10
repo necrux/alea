@@ -19,7 +19,9 @@ function alea {
                 git add index.html
                 git add assets/css/main.css
                 git add ${RESUME}
-                git add ${KONAMI}
+                if [ -f ${KONAMI} ]; then
+                    git add ${KONAMI}
+                fi
             popd &>/dev/null
             break
         fi
