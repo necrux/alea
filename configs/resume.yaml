@@ -18,8 +18,13 @@ Contact:
   Email: "wes@necrux.com"
 Summary: "Alea - I do resumes now!"
 Skills: 
-  1: "Link tree style web pages for free."
-  2: "Pretty cool resumes."
+Skills:
+  1:
+    - Old School Websites
+  2:
+    - Resumes
+  3:
+    - Python
 Experience:
   1:
     Company: "weshenderson.info"
